@@ -16,7 +16,7 @@
      ### 至此，newbee_AutoAPI库就已经安装完毕，下面你需要进行一些配置，才能使用它
 ##  
 
-## 使用教程
+## 配置教程
 1. 打开你项目的settings.py，在INSTALLED_APPS中添加`'rest_framework', 'newbee',`
 
     ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/installed_apps.png)
@@ -77,8 +77,42 @@ LOGGING = {
 }
 ```
 
-3. 打开你项目的urls.py，在urlpatterns列表中新增一行
+
+3. 在你有需要的前提下，你可以配置请求响应加密中间件，来加密前后端的数据。打开你项目的settings.py，在MIDDLEWARE中加入一条
+
+    `'newbee.newbee_middleware.DataTransMiware.DTMiddleware'`
+
+    ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/MIDDLEWARE.png)
+
+4. 打开你项目的urls.py，在urlpatterns列表中新增一行
 
     `path('', include(('newbee.urls', 'newbee'), namespace='newbee')),`
 
     ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/urls.png)
+5. 当你首次运行你的django项目时，你会发现你项目根目录自动创建了newbee_config.ini，下面是newbee_config.ini的配置讲解
+
+```
+# 数据加密中间件配置
+[DT]
+# 是否允许接收json数据(未加密)
+is_recv_json = True
+# 是否返回加密响应
+is_send_text = True
+# 不包含哪些路径 格式：["newbee/v1.0.1/area/data", "newbee/v1.0.1/user/data"&&"POST", ...]
+exclude_path = []
+
+# 查询时的配置
+[FIND]
+# 分页查询时默认一页的行数
+FINDDEFUALTPAGESIZE = 10
+# URL配置
+[URL]
+# 填写你需要修改的PATH, 无论修改成什么, 都必须有/<str:action>/
+PATH = newbee/v1.0.1/<str:action>/data
+
+```
+
+     ### 至此，newbee_AutoAPI库就已经配置完毕，你需要根据一下使用教程进行使用
+##  
+
+## 使用教程
