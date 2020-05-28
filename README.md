@@ -78,11 +78,11 @@ LOGGING = {
 ```
 
 
-3. 在你有需要的前提下，你可以配置请求响应加密中间件，来加密前后端的数据。打开你项目的settings.py，在MIDDLEWARE中加入一条
-
-    `'newbee.newbee_middleware.DataTransMiware.DTMiddleware'`
+3. 在你有需要的前提下，你可以配置请求响应加密中间件，来加密前后端的数据。打开你项目的settings.py，在MIDDLEWARE中加入一条 `'newbee.newbee_middleware.DataTransMiware.DTMiddleware'`，并且在你项目根目录新建一个名为sing_key的文件，里面填写32个字符(16位数字字符串组成)，例如:d86d7bab3d6ac01ad9dc6a897652f2d
 
     ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/MIDDLEWARE.png)
+
+    ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/sing_key.png)
 
 4. 打开你项目的urls.py，在urlpatterns列表中新增一行
 
