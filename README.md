@@ -20,7 +20,7 @@
 1. 打开你项目的settings.py，在INSTALLED_APPS中添加`'rest_framework', 'newbee',`
 
     ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/installed_apps.png)
-2. 打开你项目的settings.py，新增日志配置(不配置也可以)
+2. 打开你项目的settings.py，新增日志配置
 ```
 # 日志
 LOGGING = {
