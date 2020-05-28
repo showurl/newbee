@@ -17,3 +17,5 @@
 ##  
 
 ## 使用教程
+1. 打开你项目的settings.py，在INSTALLED_APPS中添加`'rest_framework', 'newbee',`
+    ![avatar](https://github.com/yuedashen88/newbee/blob/master/images/installed_apps.png)
