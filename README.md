@@ -155,8 +155,25 @@ class Character(newbee_model.NewBeeBaseModel):
 #### 通过下表，你可以了解到普通字段(无关联关系字段，比如NewBeeCharField, NewBeeIntegerField)中对比Django自带的普通字段(如CharField, IntegerField)增加的属性。
 | 属性名  | 值的类型  | 属性解释  | 值的示例  |
 |:----------|:----------|:----------|:----------|
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+|`new_bee_can_add`|`bool`|`当执行新增操作时<br>该字段是否允许传递<br>默认否`|`True`|
+|`new_bee_is_add_tran `|`bool `|`当执行新增操作时，该字段是否必须传递<br>默认否`|`True `|
+|`new_bee_add_key`|`str`|`当执行新增操作时<br>model.objects.create(?=value)<br>默认是请求的key(request_key)`|`name`|
+|`new_bee_request_key `|`str`|`前端传递参数时<br>要求此字段的key是?`|`name`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
+|`1`|`2`|`3`|`4`|
 
 
 ### 二、关联字段
