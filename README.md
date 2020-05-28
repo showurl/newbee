@@ -112,7 +112,108 @@ PATH = newbee/v1.0.1/<str:action>/data
 
 ```
 
-     ### 至此，newbee_AutoAPI库就已经配置完毕，你需要根据一下使用教程进行使用
+### 至此，newbee_AutoAPI库就已经配置完毕，你需要根据以下使用教程进行使用
 ##  
 
-## 使用教程
+## 使用教程~~`(以下操作全部都在你app目录下models.py中进行)`~~
+### 一、普通字段
+#### 先上代码
+```
+# 角色
+@newbee_model.decorator_factory()
+class Character(newbee_model.NewBeeBaseModel):
+    name = newbee_model.NewBeeCharField(new_bee_can_found=True, new_bee_can_add=True, new_bee_is_add_tran=True,
+                                            new_bee_can_update=True, new_bee_update_key='name',
+                                            db_column="name", max_length=48, null=True,
+                                            help_text="名字")
+    mobile = newbee_model.NewBeeCharField(new_bee_request_key='mobile', new_bee_response_key='mobile',
+                                          new_bee_can_add=True, new_bee_add_key='mobile',
+                                          new_bee_can_update=True, new_bee_update_key='mobile', new_bee_can_found=True,
+                                          max_length=11, null=True,
+                                          verbose_name='手机号')
+    level = newbee_model.NewBeeIntegerField(new_bee_request_key='level', new_bee_response_key='level',
+                                            new_bee_can_add=True, new_bee_add_key='level',
+                                            new_bee_can_update=True, new_bee_update_key='level',
+                                            new_bee_can_found=True, default=PNormalUser,
+                                            verbose_name='角色级别')
+    company = newbee_model.NewBeeForeignKey(new_bee_request_key='company_id', new_bee_can_add=True,
+                                            new_bee_can_update=True, new_bee_update_key='company_id',
+                                            new_bee_can_find_by_self=True,
+                                            new_bee_find_by_self_key='company_id', to=Company, on_delete=models.CASCADE,
+                                            null=True)
+    creater = newbee_model.NewBeeCharField(new_bee_can_found=True, max_length=48, null=True, default=None,
+                                           verbose_name='用户的创建者')
+
+    class Meta:
+        db_table = 'character'
+```
+
+#### 以上是数据库中的一张表，字段如下:
+
+![avatar](https://github.com/yuedashen88/newbee/blob/master/images/character.png)
+
+#### 通过下表，你可以了解到普通字段(无关联关系字段，比如NewBeeCharField, NewBeeIntegerField)中对比Django自带的普通字段(如CharField, IntegerField)增加的属性。
+| 属性名  | 值的类型  | 属性解释  | 值的示例  |
+|:----------|:----------|:----------|:----------|
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+
+
+### 二、关联字段
+#### 先上代码
+```
+# 角色
+@newbee_model.decorator_factory()
+class Menu(newbee_model.NewBeeBaseModel):
+    path = newbee_model.NewBeeCharField(
+        new_bee_can_found=True, db_column="path", max_length=48, null=True,
+        help_text="path"
+    )
+    icon = newbee_model.NewBeeCharField(
+        new_bee_can_found=True, db_column="icon", max_length=48, null=True,
+        help_text="icon"
+    )
+    name = newbee_model.NewBeeCharField(new_bee_can_found=True, db_column="name", max_length=48, null=True,
+                                        help_text="name")
+    component = newbee_model.NewBeeCharField(new_bee_can_found=True, db_column="component", max_length=48, null=True,
+                                             help_text="component")
+    desc = newbee_model.NewBeeCharField(db_column="desc", max_length=64, null=True, help_text="菜单描述")
+    pid = newbee_model.NewBeeForeignKey(to="self", null=True, on_delete=models.CASCADE,
+                                        help_text="父亲id",
+                                        related_name='pid_set')
+    characters = newbee_model.NewBeeManyToManyField(to=Character)  # 和jwtUser 是 多对多关系
+
+    class Meta:
+        db_table = "menu"
+```
+
+#### 以上是数据库中的一张表，字段如下:
+
+![avatar](https://github.com/yuedashen88/newbee/blob/master/images/menu.png)
+
+#### 通过下表，你可以了解到关联关系字段(比如NewBeeManyToManyField, NewBeeForeignKey)中对比Django自带的普通字段(如ManyToManyField, ForeignKey)增加的属性。
+| 属性名  | 值的类型  | 属性解释  | 值的示例  |
+|:----------|:----------|:----------|:----------|
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+
+### 三、装饰器decorator_factory
+#### 你会发现每一个model都加了一个装饰器，装饰器中可以填写哪些参数呢？都代表什么含义呢？请看下表！
+| 属性名  | 值的类型  | 属性解释  | 值的示例  |
+|:----------|:----------|:----------|:----------|
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+
+
+## 完成截图
+
+![avatar](https://github.com/yuedashen88/newbee/blob/master/images/character_postman.png)
+
+![avatar](https://github.com/yuedashen88/newbee/blob/master/images/character_response.png)
+
+## 贡献者
+yuedashen88@163.com 马守越
+### 关于打赏
+
+![avatar](https://github.com/yuedashen88/newbee/blob/master/images/zfb.png)
+
