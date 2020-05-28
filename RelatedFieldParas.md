@@ -6,9 +6,9 @@
 
 ### 如果newbee_AutoAPI库就已经配置完毕，你需要根据以下使用教程进行使用
 [一、通过示例来学习](https://github.com/yuedashen88/newbee/blob/master/LearningByExample.md)<br>
-[二、学习普通字段有哪些属性](https://github.com/yuedashen88/newbee/blob/master/LearningByExample.md)<br>
-[三、学习关联字段有哪些属性](https://github.com/yuedashen88/newbee/blob/master/LearningByExample.md)<br>
-[四、学习NEWBEE装饰器有哪些属性](https://github.com/yuedashen88/newbee/blob/master/LearningByExample.md)<br>
+[二、学习普通字段有哪些属性](https://github.com/yuedashen88/newbee/blob/master/NormalFieldParas.md)<br>
+[三、学习关联字段有哪些属性](https://github.com/yuedashen88/newbee/blob/master/RelatedFieldParas.md)<br>
+[四、学习NEWBEE装饰器有哪些属性](https://github.com/yuedashen88/newbee/blob/master/DecoratorParas.md)<br>
 [回到安装教程](https://github.com/yuedashen88/newbee/blob/master/README.md)<br>
 
 
