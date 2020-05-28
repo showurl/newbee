@@ -10,14 +10,14 @@ class NewBeeRelatedBase:
     """
 
     def __init__(self, new_bee_request_key=None, new_bee_response_key=None, new_bee_can_add=False,
-                 new_bee_create_key=None, new_bee_can_update=False, new_bee_update_key=None, new_bee_can_find=False,
+                 new_bee_add_key=None, new_bee_can_update=False, new_bee_update_key=None, new_bee_can_find=False,
                  new_bee_can_find_by_self=False, new_bee_find_by_self_key=None,
                  *args, **kwargs):
         """
         :param new_bee_request_key: request key是什么
         :param new_bee_response_key: response key是什么
         :param new_bee_can_add: 新增的时候能传递该字段吗
-        :param new_bee_create_key: 新增的时候create的key是什么
+        :param new_bee_add_key: 新增的时候create的key是什么
         :param new_bee_can_update: 允许修改此字段吗
         :param new_bee_update_key: 修改的时候update的key是什么
         :param new_bee_can_find: 允许查询此字段(带着关联的模型数据)吗
@@ -27,7 +27,7 @@ class NewBeeRelatedBase:
         self.new_bee_request_key = new_bee_request_key
         self.new_bee_response_key = new_bee_response_key
         self.new_bee_can_add = new_bee_can_add
-        self.new_bee_create_key = new_bee_create_key
+        self.new_bee_add_key = new_bee_add_key
         self.new_bee_can_update = new_bee_can_update
         self.new_bee_update_key = new_bee_update_key
         self.new_bee_can_find = new_bee_can_find
@@ -42,8 +42,8 @@ class NewBeeRelatedBase:
             return self.new_bee_response_key
         elif key in ("new_bee_can_add", "can_add"):
             return self.new_bee_can_add
-        elif key in ("new_bee_create_key", "create_key", "new_bee_add_key", "add_key"):
-            return self.new_bee_create_key
+        elif key in ("new_bee_add_key", "add_key"):
+            return self.new_bee_add_key
         elif key in ("new_bee_can_update", "can_update"):
             return self.new_bee_can_update
         elif key in ("new_bee_update_key", "update_key"):
@@ -65,7 +65,7 @@ class NewBeeRelatedBase:
         return self.new_bee_can_add
 
     def get_create_key(self):
-        return self.new_bee_create_key
+        return self.new_bee_add_key
 
     def get_can_update(self):
         return self.new_bee_can_update

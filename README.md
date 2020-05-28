@@ -169,7 +169,6 @@ class Character(newbee_model.NewBeeBaseModel):
 |`new_bee_can_found`|`bool`|`当执行查询操作时`<br>`该字段是否被返回到前端`<br>`默认否`|`True`|
 |`new_bee_can_find_by_self`|`bool`|`当执行查询操作时`<br>`是否允许前端传递此参数进行数据的过滤`<br>`默认否`|`True`|
 |`new_bee_find_by_self_key `|`str`|`当执行查询操作时`<br>`前端传递了此参数，使用哪个key去过滤`<br>`model.objects.filter(?=value)`<br>`无默认值`|`name__icontains`|
-|`1`|`2`|`3`|`4`|
 
 
 ### 二、关联字段
@@ -207,15 +206,25 @@ class Menu(newbee_model.NewBeeBaseModel):
 #### 通过下表，你可以了解到关联关系字段(比如NewBeeManyToManyField, NewBeeForeignKey)中对比Django自带的普通字段(如ManyToManyField, ForeignKey)增加的属性。
 | 属性名  | 值的类型  | 属性解释  | 值的示例  |
 |:----------|:----------|:----------|:----------|
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+|**以下是请求与响应**|
+|`new_bee_request_key `|`str`|`前端传递参数时`<br>`要求此字段的key是?`|`name`|
+|`new_bee_response_key `|`str`|`后端返回参数时`<br>`返回此字段的key是?`|`name`|
+|**以下是添加操作时可能用到的属性**|
+|`new_bee_can_add`|`bool`|`当执行新增操作时`<br>`该字段是否允许传递`<br>`默认否`|`True`|
+|`new_bee_add_key`|`str`|`当执行新增操作时`<br>`model.objects.create(?=value)`<br>`默认是请求的key(request_key)`|`name`|
+|**以下是修改操作时可能用到的属性**|
+|`new_bee_can_update`|`bool`|`当执行修改操作时`<br>`该字段是否允许传递`<br>`默认否`|`True`|
+|`new_bee_update_key`|`str`|`当执行修改操作时`<br>`objs.update(?=value)`<br>`默认是请求的key(request_key)`|`name`|
+|**以下是查询操作时可能用到的属性**|
+|`new_bee_can_found`|`bool`|`当执行查询操作时`<br>`该字段是否被返回到前端`<br>`默认否`|`True`|
+|`new_bee_can_find_by_self`|`bool`|`当执行查询操作时`<br>`是否允许前端传递此参数进行数据的过滤`<br>`默认否`|`True`|
+|`new_bee_find_by_self_key `|`str`|`当执行查询操作时`<br>`前端传递了此参数，使用哪个key去过滤`<br>`model.objects.filter(?=value)`<br>`无默认值`|`name__icontains`|
 
 ### 三、装饰器decorator_factory
 #### 你会发现每一个model都加了一个装饰器，装饰器中可以填写哪些参数呢？都代表什么含义呢？请看下表！
 | 属性名  | 值的类型  | 属性解释  | 值的示例  |
 |:----------|:----------|:----------|:----------|
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
-| Cell 1    | Cell 2    | Cell 3    | Cell 3    |
+|`1`|`2`|`3`|`4`|
 
 
 ## 完成截图
