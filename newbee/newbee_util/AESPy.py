@@ -14,8 +14,6 @@ from newbee.config import BASE_DIR
 with open(os.path.join(BASE_DIR, "sign_key")) as file:
     sign_key = file.readline().replace("\r", "").replace("\n", "")
 
-with open(os.path.join(BASE_DIR, "vx_token_key")) as file:
-    vx_token_key = file.readline().replace("\r", "").replace("\n", "")
 
 def add_to_16(value):
     while len(value) % 16 != 0:
@@ -58,7 +56,6 @@ def decrypt_oralce(key, text):
     except:
         logger.debug("解密之后的数据是:%s" % decrypted_text)
         return decrypted_text
-
 
 
 if __name__ == '__main__':

@@ -23,95 +23,95 @@ class User(models.Model):
 
 ```
 # 这是你应该修改之后的代码
-from newbee import newbee_model
-from newbee.newbee_util.request import get_request_body_dict
-
 @newbee_model.decorator_factory(
-	action="user",  # 前端url Path中携带的action
-	find_for_write_default_dict={
-		"id": lambda request: get_request_body_dict(request).get("user_id")
-	},  # 设置修改模型时使用id查询模型并修改
-	find_for_delete_default_dict={
-		"id": lambda request: get_request_body_dict(request).get("user_id")
-	},  # 设置删除模型时使用id查询模型并修改
-	write_success_return_data_form={
-		"user": {   # 增加或修改成功时，返回的json数据的key是user
-			"用户id": "id",  # 返回操作的模型的隐藏字段id，返回的key是 用户id
-			"注册时间": "create_time",  # 返回操作的模型的隐藏字段create_time，返回的key是 注册时间
-			"姓名": "name",  # 返回操作的模型的字段name，返回的key是 姓名
-			"用户类型": {   # 返回操作的模型的关联字段user_type，返回的key是 用户类型
-				"user_type": {
-					"用户类型id": "id",  # 在关联的模型中，返回关联模型的隐藏字段id, 返回的key是用户类型id
-					"用户类型名": "name"  # 在关联的模型中，返回关联模型的字段name, 返回的key是用户类型名
-				}
-			},
-			"所在的用户组": {  # 返回操作的模型的关联字段groups，返回的key是 所在的用户组
-				"groups": {
-					"用户组id": "id",  # 在关联的模型中，返回关联模型的隐藏字段id, 返回的key是用户组id
-					"用户组名": "name"  # 在关联的模型中，返回关联模型的字段name, 返回的key是用户组名
-				}
-			}
-		}
-	},
-	
-	can_add=True,  #该模型该接口允许进行增加操作，即接收POST请求
-	can_delete=True,  #该模型该接口允许进行删除操作，即接收DELETE请求
-	can_update=True,  #该模型该接口允许进行修改操作，即接收PUT请求
-	can_find=True,  #该模型该接口允许进行查询操作，即接收GET请求
-	
-	find_return_key="users",  # 查询操作成功时，返回的json数据的key是users
-	
-	find_child_field_dict_list=[  # 查询操作成功时，返回的json数据携带的关联模型的数据
-		# 返回key是用户类型 选择user_type字段 关联模型返回的数据是{id: user_type模型的id, 用户类型名: user_type模型的name}
-		["用户类型", "user_type", ["id", {"用户类型名": "name"}]],
-		# 返回key是所在的用户组 选择groups字段 关联模型返回的数据是{用户组id: groups模型的id, 用户类型名: groups模型的name}
-		["所在的用户组", "groups", [{"用户组id": "id"}, {"用户组名": "name"}]],
-	]
+    action="user",  # 前端url Path中携带的action
+    find_for_write_default_dict={
+        "id": lambda request: get_request_body_dict(request).get("user_id")
+    },  # 设置修改模型时使用id查询模型并修改
+    find_for_delete_default_dict={
+        "id": lambda request: get_request_body_dict(request).get("user_id")
+    },  # 设置删除模型时使用id查询模型并修改
+    write_success_return_data_form={
+        "user": {  # 增加或修改成功时，返回的json数据的key是user
+            "用户id": "id",  # 返回操作的模型的隐藏字段id，返回的key是 用户id
+            "注册时间": "create_time",  # 返回操作的模型的隐藏字段create_time，返回的key是 注册时间
+            "姓名": "name",  # 返回操作的模型的字段name，返回的key是 姓名
+            "用户类型": {  # 返回操作的模型的关联字段user_type，返回的key是 用户类型
+                "user_type": {
+                    "用户类型id": "id",  # 在关联的模型中，返回关联模型的隐藏字段id, 返回的key是用户类型id
+                    "用户类型名": "name"  # 在关联的模型中，返回关联模型的字段name, 返回的key是用户类型名
+                }
+            },
+            "所在的用户组": {  # 返回操作的模型的关联字段groups，返回的key是 所在的用户组
+                "groups": {
+                    "用户组id": "id",  # 在关联的模型中，返回关联模型的隐藏字段id, 返回的key是用户组id
+                    "用户组名": "name"  # 在关联的模型中，返回关联模型的字段name, 返回的key是用户组名
+                }
+            }
+        }
+    },
+
+    can_add=True,  # 该模型该接口允许进行增加操作，即接收POST请求
+    can_delete=True,  # 该模型该接口允许进行删除操作，即接收DELETE请求
+    can_update=True,  # 该模型该接口允许进行修改操作，即接收PUT请求
+    can_find=True,  # 该模型该接口允许进行查询操作，即接收GET请求
+
+    find_return_key="users",  # 查询操作成功时，返回的json数据的key是users
+
+    find_child_field_dict_list=[  # 查询操作成功时，返回的json数据携带的关联模型的数据
+        # 返回key是用户类型 选择user_type字段 关联模型返回的数据是{id: user_type模型的id, 用户类型名: user_type模型的name}
+        ["用户类型", "user_type", ["id", {"用户类型名": "name"}]],
+        # 返回key是所在的用户组 选择groups字段 关联模型返回的数据是{用户组id: groups模型的id, 用户类型名: groups模型的name}
+        ["所在的用户组", "groups", [{"用户组id": "id"}, {"用户组名": "name"}]],
+    ]
 )
 class User(newbee_model.NewBeeBaseModel):
-	name = newbee_model.NewBeeCharField(
-			new_bee_request_key="username",  # 前端传递的时候需要传递的key是username
-			new_bee_response_key="username",  # 查询成功返回时的key
-			new_bee_can_add=True, #支持新增时(POST请求)传递username
-			new_bee_is_add_tran=True,  # 新增时必须传递username参数
-			new_bee_add_key="name",  # 写入数据库时model.objects.create(name=前端传递的username值)
-			new_bee_can_update=True,  # 支持修改时(PUT请求)传递username
-			new_bee_update_key="name",  # 写入数据库时obj.update(name=前端传递的username值)
-			new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
-			new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
-			new_bee_find_by_self_key='name__icontains',  # 搜索时的key是name__icontains，代表
-				# model.objects.filter(name__icontains=前端传递的username值)
-			max_length=8,  # 这是原来的属性
-			null=False  # 这是原来的属性
-		)
-	user_type = newbee_model.NewBeeForeignKey(
-			new_bee_request_key="type_id",  # 前端传递的时候需要传递的key是type_id
-			new_bee_response_key="type_id",  # 查询成功返回时的key
-			new_bee_can_add=True, #支持新增时(POST请求)传递type_id
-			new_bee_add_key="user_type_id",  # 写入数据库时model.objects.create(name=前端传递的type_id值)
-			new_bee_can_update=True,  # 支持修改时(PUT请求)传递type_id
-			new_bee_update_key="user_type_id",  # 写入数据库时obj.update(name=前端传递的type_id值)
-			new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
-			new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
-			new_bee_find_by_self_key='user_type_id',  # 搜索时的key是user_type_id，代表
-				# model.objects.filter(user_type_id =前端传递的type_id值)
-			related_name='user_set',  # 可以设置可以不设置，方便其他模型类的API可以增加或修改或查询与此模型的关系
-			to=UserType, # 这是原来的属性
-		)
-	groups = newbee_model.NewBeeManyToManyField(
-			new_bee_request_key="group_ids",  # 前端传递的时候需要传递的key是group_ids
-			new_bee_response_key="group_ids",  # 查询成功返回时的key
-			new_bee_can_add=True, #支持新增时(POST请求)传递group_ids
-			new_bee_add_key="groups",  # 写入数据库时model.objects.create(name=前端传递的group_ids值)
-			new_bee_can_update=True,  # 支持修改时(PUT请求)传递group_ids
-			new_bee_update_key="groups",  # 写入数据库时obj.update(name=前端传递的group_ids值)
-			new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
-			new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
-			new_bee_find_by_self_key='groups',  # 搜索时的key是groups，代表
-				# obj.groups.add(*前端传递的group_ids值)
-			related_name='group_set',  # 可以设置可以不设置，方便其他模型类的API可以增加或修改或查询与此模型的关系
-			to=Group,  # 这是原来的属性
-		)
+    name = newbee_model.NewBeeCharField(
+        new_bee_request_key="username",  # 前端传递的时候需要传递的key是username
+        new_bee_response_key="username",  # 查询成功返回时的key
+        new_bee_can_add=True,  # 支持新增时(POST请求)传递username
+        new_bee_is_add_tran=True,  # 新增时必须传递username参数
+        new_bee_add_key="name",  # 写入数据库时model.objects.create(name=前端传递的username值)
+        new_bee_can_update=True,  # 支持修改时(PUT请求)传递username
+        new_bee_update_key="name",  # 写入数据库时obj.update(name=前端传递的username值)
+        new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
+        new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
+        new_bee_find_by_self_key='name__icontains',  # 搜索时的key是name__icontains，代表
+        # model.objects.filter(name__icontains=前端传递的username值)
+        max_length=8,  # 这是原来的属性
+        null=False  # 这是原来的属性
+    )
+    user_type = newbee_model.NewBeeForeignKey(
+        new_bee_request_key="type_id",  # 前端传递的时候需要传递的key是type_id
+        new_bee_response_key="type_id",  # 查询成功返回时的key
+        new_bee_can_add=True,  # 支持新增时(POST请求)传递type_id
+        new_bee_add_key="user_type_id",  # 写入数据库时model.objects.create(name=前端传递的type_id值)
+        new_bee_can_update=True,  # 支持修改时(PUT请求)传递type_id
+        new_bee_update_key="user_type_id",  # 写入数据库时obj.update(name=前端传递的type_id值)
+        new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
+        new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
+        new_bee_find_by_self_key='user_type_id',  # 搜索时的key是user_type_id，代表
+        # model.objects.filter(user_type_id =前端传递的type_id值)
+        related_name='user_set',  # 可以设置可以不设置，方便其他模型类的API可以增加或修改或查询与此模型的关系
+        to=UserType,  # 这是原来的属性
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    groups = newbee_model.NewBeeManyToManyField(
+        new_bee_request_key="group_ids",  # 前端传递的时候需要传递的key是group_ids
+        new_bee_response_key="group_ids",  # 查询成功返回时的key
+        new_bee_can_add=True,  # 支持新增时(POST请求)传递group_ids
+        new_bee_add_key="groups",  # 写入数据库时model.objects.create(name=前端传递的group_ids值)
+        new_bee_can_update=True,  # 支持修改时(PUT请求)传递group_ids
+        new_bee_update_key="groups",  # 写入数据库时obj.update(name=前端传递的group_ids值)
+        new_bee_can_found=True,  # 查询该User模型成功后，返回此字段值
+        new_bee_can_find_by_self=True,  # 允许通过此字段进行搜索
+        new_bee_find_by_self_key='groups',  # 搜索时的key是groups，代表
+        # obj.groups.add(*前端传递的group_ids值)
+        related_name='group_set',  # 可以设置可以不设置，方便其他模型类的API可以增加或修改或查询与此模型的关系
+        to=Group,  # 这是原来的属性
+    )
+
 ```
 #### 修改好之后 你将拥有以下接口
 ```

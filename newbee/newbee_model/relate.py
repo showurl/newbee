@@ -10,7 +10,7 @@ class NewBeeRelatedBase:
     """
 
     def __init__(self, new_bee_request_key=None, new_bee_response_key=None, new_bee_can_add=False,
-                 new_bee_add_key=None, new_bee_can_update=False, new_bee_update_key=None, new_bee_can_find=False,
+                 new_bee_add_key=None, new_bee_can_update=False, new_bee_update_key=None, new_bee_can_found=False,
                  new_bee_can_find_by_self=False, new_bee_find_by_self_key=None,
                  *args, **kwargs):
         """
@@ -20,7 +20,7 @@ class NewBeeRelatedBase:
         :param new_bee_add_key: 新增的时候create的key是什么
         :param new_bee_can_update: 允许修改此字段吗
         :param new_bee_update_key: 修改的时候update的key是什么
-        :param new_bee_can_find: 允许查询此字段(带着关联的模型数据)吗
+        :param new_bee_can_found: 允许查询此字段(带着关联的模型数据)吗
         :param args:
         :param kwargs:
         """
@@ -30,7 +30,7 @@ class NewBeeRelatedBase:
         self.new_bee_add_key = new_bee_add_key
         self.new_bee_can_update = new_bee_can_update
         self.new_bee_update_key = new_bee_update_key
-        self.new_bee_can_find = new_bee_can_find
+        self.new_bee_can_found = new_bee_can_found
         self.new_bee_can_find_by_self = new_bee_can_find_by_self
         self.new_bee_find_by_self_key = new_bee_find_by_self_key
         super().__init__(*args, **kwargs)
@@ -49,7 +49,7 @@ class NewBeeRelatedBase:
         elif key in ("new_bee_update_key", "update_key"):
             return self.new_bee_update_key
         elif key in ("new_bee_can_find", "can_find"):
-            return self.new_bee_can_find
+            return self.new_bee_can_found
         elif key in ("new_bee_can_find_by_self", "can_find_by_self"):
             return self.new_bee_can_find_by_self
         elif key in ("new_bee_find_by_self_key", "find_by_self_key"):
@@ -74,7 +74,7 @@ class NewBeeRelatedBase:
         return self.new_bee_update_key
 
     def get_can_find(self):
-        return self.new_bee_can_find
+        return self.new_bee_can_found
 
     def get_can_find_by_self(self):
         return self.new_bee_can_find_by_self
