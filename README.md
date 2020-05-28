@@ -5,7 +5,7 @@
 ##  
 
 ## 安装教程
-1. 你可以在[https://github.com/yuedashen88/newbee/releases/](url)中获取最新版本进行下载
+1. 你可以在`https://github.com/yuedashen88/newbee/releases`中获取最新版本进行下载
 1. 
 	- 进入你项目的虚拟环境中, 执行命令
 	- `pip install /Users/yuedashen88/Downloads/newbee-1.0.1.tar.gz`
