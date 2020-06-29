@@ -1,4 +1,5 @@
 import datetime
+import json
 from django.db import models
 import decimal
 from django.db.models.query import QuerySet
@@ -93,4 +94,5 @@ def models_to_json(data):
     return data
 
 if __name__ == '__main__':
-    pass
+    data = {'name': '测试4个组织机构', 'charge_person': '马守越', 'address': '不告诉你', 'email': 'yuey@163.com', 'remark': '测试4个组织机构'}
+    print(models_to_json(data))

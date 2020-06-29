@@ -1,29 +1,22 @@
 from django.db import transaction
 import json
 from newbee import newbee_model, config
+from newbee.models import NewBeeDeleteRecord
 from newbee.newbee_util.model_to_json import models_to_json
 from newbee.newbee_util.pro_log import logger
 from newbee.newbee_util.request import get_request_body_dict
-from newbee import status_dict
+from newbee.tran import status_dict
 
 
 def add_util(request, action, write_database_func=None):
-    """
-    执行增加业务时  你需要调用的方法
-    :param request: 前端发送的请求
-    :param action: 路径传参携带的action
-    :param write_database_func: 你可以重写写入数据库的方法  填到此项
-    :return:
-    """
-    # 获取json字典
+    # 解析request数据  先转json
     json_data = get_request_body_dict(request)
-    # 获取model
+    # 转json成功
+    # 拿到model信息
+
     model = get_model_by_model_info(action)
-    # 获取增加业务默认的字典
     add_default_dict = get_add_default_dict(action)
-    # 获取增加成功时返回的data格式
     write_success_return_data_form = get_write_success_return_data_form(action)
-    # 查询该action是否可以执行增加业务
     can_add = get_can_add(action)
     if not model:
         return {"msg": "找不到%s模型" % action,
@@ -127,10 +120,9 @@ def add_util(request, action, write_database_func=None):
 
 def update_util(request, action, func=None):
     """
-    执行更新业务时  你需要调用的方法
-    :param request: 前端发送的请求
-    :param action: 路径传参携带的action
-    :param func: 你可以重写写入数据库的方法  填到此项
+
+    :param request:
+    :param action:
     :return:
     """
     # 解析request数据  先转json
@@ -197,6 +189,9 @@ def update_util(request, action, func=None):
         except:
             continue
         else:
+            # if not normal_field_value:
+            #     continue
+            # else:
             create_key = newbee_model.get_attr_by_model_field_key(model, field, "new_bee_update_key")
             if not create_key:
                 create_key = request_key
@@ -249,12 +244,9 @@ def update_util(request, action, func=None):
 
 def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, order_by="id"):
     """
-    执行查询业务时  你需要调用的方法
-    :param request: 前端发送的请求
-    :param action: 路径传参携带的action
-    :param page: 分页查询的页码
-    :param pageSize: 分页查询每页的最大行数
-    :param order_by: 通过？？排序
+
+    :param request:
+    :param action:
     :return:
     """
     # 解析request数据  先转json
@@ -306,6 +298,9 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
     if find_dict == find_dict__:
         find_dict.update(get_if_find_dict_none(request, action))
     logger.debug("查询字典是: %s" % find_dict)
+    set_default_find_data_to_database = get_set_default_find_data_to_database(action=action)
+    if set_default_find_data_to_database:
+        find_dict = set_default_find_data_to_database(find_dict)
     if not find_dict:
         objs = model.objects.all().order_by(order_by)
     else:
@@ -318,7 +313,12 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
             for k, v in find_add_dict.items():
                 obj_data[k] = obj.__dict__[v]
         for k, v in find_response_normal_field_dict.items():
-            obj_data[v.get("response_key")] = obj.__dict__[k]
+            response_key = v.get("response_key")
+            if not response_key.endswith("&json"):
+                obj_data[v.get("response_key")] = obj.__dict__[k]
+            else:
+                value__ = obj.__dict__[k]
+                obj_data[response_key[:-5]] = json.loads(value__) if value__ else None
         if find_parent_field_list:
             for find_parent_field in find_parent_field_list:
                 key, this_field_name, new_model_fields = find_parent_field
@@ -332,9 +332,14 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
                                 if isinstance(new_model_field, dict):
                                     for dk, dv in new_model_field.items():
                                         if nk == dv:
-                                            new_model_value[dk] = nv
+                                            if dk.endswith("&json"):
+                                                new_model_value[dk[:-5]] = json.loads(nv) if nv else None
+                                            else:
+                                                new_model_value[dk] = nv
                             if nk in new_model_fields:
                                 new_model_value[nk] = nv
+                            elif nk+"&json" in new_model_fields:
+                                new_model_value[nk] = json.loads(nv) if nv else None
                         if new_model_value:
                             new_model_values.append(new_model_value)
                     if new_model_values:
@@ -345,6 +350,8 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
                     for nk, nv in new_model.__dict__.items():
                         if nk in new_model_fields:
                             new_model_value[nk] = nv
+                        elif nk + "&json" in new_model_fields:
+                            new_model_value[nk] = json.loads(nv) if nv else None
                     obj_data[key] = new_model_value
         if find_child_field_list:
             for find_parent_field in find_child_field_list:
@@ -359,9 +366,14 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
                                 if isinstance(new_model_field, dict):
                                     for dk, dv in new_model_field.items():
                                         if nk == dv:
-                                            new_model_value[dk] = nv
+                                            if dk.endswith("&json"):
+                                                new_model_value[dk[:-5]] = json.loads(nv) if nv else None
+                                            else:
+                                                new_model_value[dk] = nv
                             if nk in new_model_fields:
                                 new_model_value[nk] = nv
+                            elif nk + "&json" in new_model_fields:
+                                new_model_value[nk] = json.loads(nv) if nv else None
                         if new_model_value:
                             new_model_values.append(new_model_value)
                     if new_model_values:
@@ -374,6 +386,8 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
                         for nk, nv in new_model.__dict__.items():
                             if nk in new_model_fields:
                                 new_model_value[nk] = nv
+                            elif nk + "&json" in new_model_fields:
+                                new_model_value[nk] = json.loads(nv) if nv else None
                         obj_data[key] = new_model_value
         if obj_data:
             find_data_list.append(obj_data)
@@ -397,7 +411,7 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
             return status_dict.get_FAIL_BY_NOT_FOUND_404(), 404
         if range_start <= range_end < 0:  # pageSize不正常
             range_start = range_end = 0
-        model_data_page = find_data_list[range_start:range_end]
+        model_data_page = find_data_list[range_start:min(range_end, page_count)]
         return {
                    "msg": "查询成功",
                    "code": 200,
@@ -411,9 +425,9 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
 
 def delete_util(request, action):
     """
-    执行删除业务时  你需要调用的方法
-    :param request: 前端发送的请求
-    :param action: 路径传参携带的action
+
+    :param request:
+    :param action:
     :return:
     """
     model = get_model_by_model_info(action)  # 模型
@@ -506,13 +520,11 @@ def get_model_info(action):
 def get_model_by_model_info(action=None, info_dict=None):
     """
     通过action或模型信息找到该模型
-    :param action: 前端URL传递的action
+    :param action:
     :param info_dict:
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("model")
     return info_dict.get("model")
 
@@ -525,8 +537,6 @@ def get_default_update_data_to_database(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("set_default_update_data_to_database")
     return info_dict.get("set_default_update_data_to_database")
 
@@ -539,8 +549,6 @@ def get_add_default_dict(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("add_default_dict")
     return info_dict.get("add_default_dict")
 
@@ -553,8 +561,6 @@ def get_update_default_dict(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("update_default_dict")
     return info_dict.get("update_default_dict")
 
@@ -567,8 +573,6 @@ def get_write_success_return_data_form(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("write_success_return_data_form")
     return info_dict.get("write_success_return_data_form")
 
@@ -581,8 +585,6 @@ def get_add_re_realte_dict_list(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("add_re_realte_dict_list")
     return info_dict.get("add_re_realte_dict_list")
 
@@ -595,8 +597,6 @@ def get_update_re_realte_dict_list(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("update_re_realte_dict_list")
     return info_dict.get("update_re_realte_dict_list")
 
@@ -609,8 +609,6 @@ def get_can_add(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("can_add")
     return info_dict.get("can_add")
 
@@ -623,8 +621,6 @@ def get_can_delete(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("can_delete")
     return info_dict.get("can_delete")
 
@@ -637,8 +633,6 @@ def get_can_update(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("can_update")
     return info_dict.get("can_update")
 
@@ -651,8 +645,6 @@ def get_can_find(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("can_find")
     return info_dict.get("can_find")
 
@@ -665,8 +657,6 @@ def get_default_add_data_to_database(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("set_default_add_data_to_database")
     return info_dict.get("set_default_add_data_to_database")
 
@@ -679,8 +669,6 @@ def get_find_parent_field_dict_list(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("find_parent_field_dict_list")
     return info_dict.get("find_parent_field_dict_list")
 
@@ -693,8 +681,6 @@ def get_find_child_field_dict_list(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("find_child_field_dict_list")
     return info_dict.get("find_child_field_dict_list")
 
@@ -707,8 +693,6 @@ def get_find_return_key(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("find_return_key")
     return info_dict.get("find_return_key")
 
@@ -721,8 +705,6 @@ def get_find_id_key(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("find_id_key")
     return info_dict.get("find_id_key")
 
@@ -735,8 +717,6 @@ def get_find_add_dict(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("find_add_dict_list")
     return info_dict.get("find_add_dict_list")
 
@@ -749,10 +729,19 @@ def get_default_delete_data_to_database(action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         return get_model_info(action).get("set_default_delete_data_to_database")
     return info_dict.get("set_default_delete_data_to_database")
+
+def get_set_default_find_data_to_database(action=None, info_dict=None):
+    """
+    通过action或模型信息找到新增成功返回格式
+    :param action:
+    :param info_dict:
+    :return:
+    """
+    if not info_dict:
+        return get_model_info(action).get("set_default_find_data_to_database")
+    return info_dict.get("set_default_find_data_to_database")
 
 
 def get_find_default_dict(request, action=None, info_dict=None):
@@ -764,8 +753,6 @@ def get_find_default_dict(request, action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         find_default_dict_ = get_model_info(action).get("find_default_dict")
     else:
         find_default_dict_ = info_dict.get("find_default_dict")
@@ -785,8 +772,6 @@ def get_if_find_dict_none(request, action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         find_default_dict_ = get_model_info(action).get("if_find_dict_none")
     else:
         find_default_dict_ = info_dict.get("if_find_dict_none")
@@ -806,8 +791,6 @@ def get_delete_default_dict(request, action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         find_default_dict_ = get_model_info(action).get("delete_default_dict")
     else:
         find_default_dict_ = info_dict.get("delete_default_dict")
@@ -826,8 +809,6 @@ def get_find_for_delete_default_dict(request, action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         find_for_write_default_dict = {}
         find_for_write_default_dict_ = get_model_info(action).get("find_for_delete_default_dict")
         for k, v in find_for_write_default_dict_.items():
@@ -848,8 +829,6 @@ def get_find_for_write_default_dict(request, action=None, info_dict=None):
     :return:
     """
     if not info_dict:
-        if not get_model_info(action):
-            return None
         find_for_write_default_dict = {}
         find_for_write_default_dict_ = get_model_info(action).get("find_for_write_default_dict")
         for k, v in find_for_write_default_dict_.items():
@@ -896,8 +875,6 @@ def get_normal_field_list_by_model(model):
     :param model:
     :return:
     """
-    if not model:
-        return []
     return [field.name for field in model._meta.fields if
             (isinstance(field, newbee_model.NewBeeFieldBase) or isinstance(field, newbee_model.NewBeeRelatedBase))]
 
@@ -908,8 +885,6 @@ def get_many_to_many_field_list_by_model(model):
     :param model:
     :return:
     """
-    if not model:
-        return []
     return [field.name for field in model._meta.many_to_many if isinstance(field, newbee_model.NewBeeManyToManyField)]
 
 
@@ -1080,7 +1055,8 @@ def delete_data_to_database(model, find_dict, set_default_delete_data_to_databas
             })
             return return_json_j, 400
             # 模型备份
-        delete_record = json.dumps(models_to_json(objs))
+        for obj in objs:
+            NewBeeDeleteRecord.objects.create(model_name=model.__name__, record_json=json.dumps(models_to_json(obj)))
         objs.delete()
 
     except Exception as e:
@@ -1095,7 +1071,7 @@ def delete_data_to_database(model, find_dict, set_default_delete_data_to_databas
                }, 500
     else:
         transaction.savepoint_commit(sid)  # 如果没有异常，成功提交事物
-        logger.info("%s模型删除了一条数据%s成功" % (model.__str__, str(delete_record)))
+        logger.info("%s模型删除了一条数据%s成功" % (model.__str__, str(find_dict)))
         return_json = status_dict.get_DELETE_SUCCESS_2001()
         return_json.update({
 
@@ -1130,7 +1106,7 @@ def get_model_data_by_id(model, id, return_data_dict):
                 except:
                     return_data[k] = v
                 else:
-                    if obj_field:
+                    if obj_field != None:
                         return_data[k] = obj_field
                     else:
                         return_data[k] = v
@@ -1145,15 +1121,24 @@ def get_model_data_by_id(model, id, return_data_dict):
                             for obj_field_a in obj_fields:
                                 dict_a = {}
                                 for kkk, vvv in vv.items():
-                                    dict_a[kkk] = getattr(obj_field_a, vvv)
+                                    value = getattr(obj_field_a, vvv)
+                                    if kkk.endswith("&json"):
+                                        dict_a[kkk[:-5]] = json.loads(value) if value else None
+                                    else:
+                                        dict_a[kkk] = value
                                 return_list.append(dict_a)
                             if return_list:
                                 return_data[k] = return_list
                         except:
                             for kkk, vvv in vv.items():
-                                return_dict[kkk] = getattr(obj_field, vvv)
+                                if kkk.endswith("&json"):
+                                    value = getattr(obj_field, vvv)
+                                    return_dict[kkk[:-5]] = json.loads(value) if value else None
+                                else:
+                                    return_dict[kkk] = getattr(obj_field, vvv)
                             if return_dict:
                                 return_data[k] = return_dict
+
         return return_data
     return records
 

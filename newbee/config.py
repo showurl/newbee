@@ -3,7 +3,6 @@ import os
 import configparser
 
 BASE_DIR = django.conf.settings.BASE_DIR
-# BASE_DIR = "/Users/mashouyue/PycharmProjects/django_newbee_framework/Django_NEWBEE_AUTOAPI"
 NEWBEE_INI = os.path.join(BASE_DIR, "newbee_config.ini")
 
 if not os.path.exists(NEWBEE_INI):

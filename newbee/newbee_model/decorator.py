@@ -10,15 +10,15 @@ def decorator_factory(can_delete=False, can_add=True, can_update=True, can_find=
                       find_for_write_default_dict=None, find_for_delete_default_dict=None,
                       if_find_dict_none=None, find_id_key=None, find_add_dict_list=None,
                       write_success_return_data_form=None, set_default_add_data_to_database=None,
-                      set_default_update_data_to_database=None, set_default_delete_data_to_database=None):
+                      set_default_update_data_to_database=None, set_default_delete_data_to_database=None, set_default_find_data_to_database=None):
     """
 
     :param can_delete: 是否支持逻辑删除 默认是
-    :param can_add: 是否支持增加 默认是
-    :param can_update: 是否支持更新 默认是
-    :param can_find: 是否支持查询 默认是
+    :param can_delete_forever: 是否支持永久删除 默认否
     :param action: action(model链接名) 默认 model.__name__.lower()
     :param add_default_dict: 在执行增加操作时 附加的 add_dict是 默认 None 你可以这么写 {"key": lambda request: None} 或者 {"key": def func(request):pass}
+    :param on_delete_dict_list: 有关外键删除时的操作字典 默认 None 你可以这么写{"action": "foreign", "on_delete": NEWBEECASCADE, "field": "foreign"}
+    :param delete_default_dict: 在执行逻辑删除操作时 附加的 delete_dict是  你可以这么写 {"key": lambda request: None} 或者 {"key": def func(request):pass}
     :param update_default_dict: 在执行修改操作时 附加的 update_dict是 默认 你可以这么写 {"key": lambda request: None} 或者 {"key": def func(request):pass}
     :param find_default_dict: 在执行查询操作时 附加的 find_dict是 默认 {"is_deleted": lambda request:False} 你可以这么写 {"key": lambda request: None} 或者 {"key": def func(request):pass}
     :param find_return_key: 查询成功  返回时的key  默认是action名加_list
@@ -35,6 +35,7 @@ def decorator_factory(can_delete=False, can_add=True, can_update=True, can_find=
     :param set_default_add_data_to_database: 数据库事务中新增操作
     :param set_default_update_data_to_database: 数据库事务中新增操作
     :param set_default_delete_data_to_database: 数据库事务中新增操作
+    :param set_default_find_data_to_database: 数据库事务中查询操作
     :return:
     """
 
@@ -127,6 +128,7 @@ def decorator_factory(can_delete=False, can_add=True, can_update=True, can_find=
             "set_default_add_data_to_database": set_default_add_data_to_database,
             "set_default_update_data_to_database": set_default_update_data_to_database,
             "set_default_delete_data_to_database": set_default_delete_data_to_database,
+            "set_default_find_data_to_database": set_default_find_data_to_database,
         }
 
         return class_obj

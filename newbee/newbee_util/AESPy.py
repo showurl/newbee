@@ -4,16 +4,16 @@ import json
 import os
 
 from newbee.newbee_util.pro_log import logger
-
-from newbee.config import BASE_DIR
+from shared_parking.settings import BASE_DIR
 
 '''
 采用AES对称加密算法
 '''
-
 with open(os.path.join(BASE_DIR, "sign_key")) as file:
     sign_key = file.readline().replace("\r", "").replace("\n", "")
 
+with open(os.path.join(BASE_DIR, "vx_token_key")) as file:
+    vx_token_key = file.readline().replace("\r", "").replace("\n", "")
 
 def add_to_16(value):
     while len(value) % 16 != 0:
@@ -23,13 +23,17 @@ def add_to_16(value):
 
 
 # 加密方法
-def encrypt_oracle(key, text):
+def encrypt_oracle(key, text, remove_space=False):
     if not text:
         return None
     logger.debug("加密之前的数据是:%s" % text)
     if not isinstance(text, str):
-        text = json.dumps(text).replace(" ", "")
-    text = text.replace(" ", "")
+        if not remove_space:
+            text = json.dumps(text).replace(" ", "")
+        else:
+            text = json.dumps(text)
+    if not remove_space:
+        text = text.replace(" ", "")
     cipher = AES.new(add_to_16(key), AES.MODE_ECB)
     x = AES.block_size - (len(text) % AES.block_size)
     if x != 0:
@@ -58,5 +62,15 @@ def decrypt_oralce(key, text):
         return decrypted_text
 
 
+
 if __name__ == '__main__':
+    # text = "{\"username\": \"admin\", \"password\": \"admin\", \"type\": \"account\"}"
+    # print(text)
+    # entrypted_text = encrypt_oracle("d86d7bab3d6ac01ad9dc6a897652f2d2", text)
+    # print(entrypted_text)
+    # # print(decrypt_oralce("d86d7bab3d6ac01ad9dc6a897652f2d2", entrypted_text))
     pass
+    # print(decrypt_oralce("d86d7bab3d6ac01ad9dc6a897652f2d2",
+    #                  '2Ns1kT4lFbToCmvkNc1oxCvcRGBZctQEy67yjmJZKDWfUiqzYAOZmdiJs8cy6WSQSlsQPTMT1+TA0NsK5meEWqbK3BAMF132+UjvlasYCb8='))
+    # print(base64.decodestring("6s/kkZ057XIaebekfWoaDA=="))
+    print(base64.b64decode("6s/kkZ057XIaebekfWoaDA=="))

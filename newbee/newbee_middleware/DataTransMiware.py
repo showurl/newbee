@@ -11,16 +11,16 @@ from django.utils.deprecation import MiddlewareMixin
 
 from newbee.newbee_util.AESPy import decrypt_oralce, encrypt_oracle
 from newbee.newbee_util.AESPy import sign_key
-
+from newbee.config import is_recv_json, is_send_text, exclude_path
 # 前端请求json  是否进行业务处理
 from newbee.newbee_util.pro_log import logger
-from newbee.config import is_recv_json, is_send_text, exclude_path
 
 
 class DTMiddleware(MiddlewareMixin):
     def process_request(self, request):
         path = str(request.path)
-        if path not in exclude_path and [path, str(request.method).upper()] not in exclude_path:
+        if path not in exclude_path and [path, str(request.method).upper()] not in exclude_path and str(
+                request.method).upper() != "GET":
             try:
                 if is_recv_json:
                     if request.META["CONTENT_TYPE"] not in ("application/json",):
@@ -69,7 +69,7 @@ class DTMiddleware(MiddlewareMixin):
                         http_response.status_code = 400
                         return http_response
             except Exception as e:
-                logger.error("解密时发生错误:%s" % e)
+                logger.error("解密时发生错误")
 
     def process_response(self, request, response):
         path = str(request.path)
