@@ -4,7 +4,8 @@ import json
 import os
 
 from newbee.newbee_util.pro_log import logger
-from shared_parking.settings import BASE_DIR
+import django.conf
+BASE_DIR = django.conf.settings.BASE_DIR
 
 '''
 采用AES对称加密算法
@@ -14,6 +15,7 @@ with open(os.path.join(BASE_DIR, "sign_key")) as file:
 
 with open(os.path.join(BASE_DIR, "vx_token_key")) as file:
     vx_token_key = file.readline().replace("\r", "").replace("\n", "")
+
 
 def add_to_16(value):
     while len(value) % 16 != 0:
@@ -62,7 +64,6 @@ def decrypt_oralce(key, text):
         return decrypted_text
 
 
-
 if __name__ == '__main__':
     # text = "{\"username\": \"admin\", \"password\": \"admin\", \"type\": \"account\"}"
     # print(text)
@@ -70,7 +71,10 @@ if __name__ == '__main__':
     # print(entrypted_text)
     # # print(decrypt_oralce("d86d7bab3d6ac01ad9dc6a897652f2d2", entrypted_text))
     pass
-    # print(decrypt_oralce("d86d7bab3d6ac01ad9dc6a897652f2d2",
-    #                  '2Ns1kT4lFbToCmvkNc1oxCvcRGBZctQEy67yjmJZKDWfUiqzYAOZmdiJs8cy6WSQSlsQPTMT1+TA0NsK5meEWqbK3BAMF132+UjvlasYCb8='))
+    print(decrypt_oralce("d86d7bab3d6ac01ad9dc6a897652f2d2",
+                     'NiMRj3Toxy1YxPvBptLStGgmAQ59j/P+iulFod74RSSwtdKkAkxoIZ/+BnPtfXewrm03KuxfHGgjK5VJrjOMag=='))
     # print(base64.decodestring("6s/kkZ057XIaebekfWoaDA=="))
-    print(base64.b64decode("6s/kkZ057XIaebekfWoaDA=="))
+    # print(base64.b64decode("6s/kkZ057XIaebekfWoaDA=="))
+    # print(
+    #     encrypt_oracle(b'hgfdsapoiuytrewq'.hex(), json.dumps({'a':1}))
+    # )

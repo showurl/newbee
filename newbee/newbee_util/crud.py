@@ -411,7 +411,7 @@ def find_util(request, action, page=0, pageSize=config.FINDDEFUALTPAGESIZE, orde
             return status_dict.get_FAIL_BY_NOT_FOUND_404(), 404
         if range_start <= range_end < 0:  # pageSize不正常
             range_start = range_end = 0
-        model_data_page = find_data_list[range_start:min(range_end, page_count)]
+        model_data_page = find_data_list[range_start:min(range_end, range_start+pageSize)]
         return {
                    "msg": "查询成功",
                    "code": 200,

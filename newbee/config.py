@@ -1,8 +1,9 @@
-import django
+import django.conf
 import os
 import configparser
 
 BASE_DIR = django.conf.settings.BASE_DIR
+# BASE_DIR = "/Users/mashouyue/PycharmProjects/django_newbee_framework/Django_NEWBEE_AUTOAPI"
 NEWBEE_INI = os.path.join(BASE_DIR, "newbee_config.ini")
 
 if not os.path.exists(NEWBEE_INI):
@@ -31,24 +32,16 @@ config = configparser.ConfigParser()
 config.read(NEWBEE_INI, encoding='utf-8')
 is_recv_json = True if config.get('DT', 'is_recv_json').lower().strip() in ("true", "1") else False
 is_send_text = True if config.get('DT', 'is_send_text').lower().strip() in ("true", "1") else False
-exclude_path = config.get('DT', 'exclude_path') or "[]"
+exclude_path_ = config.get('DT', 'exclude_path') or None
 
-if not exclude_path.startswith("[") or not exclude_path.endswith("]"):
-    exclude_path = []
-else:
-    exclude_path = exclude_path[1: -1].replace(" ", "")
-    if len(exclude_path) <= 0:
-        exclude_path = []
+if exclude_path_:
+    exclude_path_ = str(exclude_path_).replace(" ", "").split(",")
+exclude_path = []
+for exclude in exclude_path_:
+    if "&&" in exclude:
+        exclude_path.append(list(exclude.split("&&")))
     else:
-        list_exclude_path = exclude_path.split(',')
-        all_exclude_path = []
-        for exclude_path_a in list_exclude_path:
-            exclude_path_a = exclude_path_a.replace("\"", "")
-            if "&&" in exclude_path_a:
-                list_exclude_path_a = exclude_path_a.split('&&')
-                exclude_path_a = [*list_exclude_path_a]
-            all_exclude_path.append(
-                exclude_path_a
-            )
+        exclude_path.append(exclude)
+
 FINDDEFUALTPAGESIZE = config.getint('FIND', 'FINDDEFUALTPAGESIZE') or 10
 PATH = config.get('URL', 'PATH') or "newbee/v1.0.1/<str:action>/data"

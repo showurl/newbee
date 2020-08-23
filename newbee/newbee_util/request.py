@@ -43,6 +43,7 @@ def get_character_id_by_request(request):
             return -1
         else: return chara.id
 
+
 def get_user_by_request(request):
     token = request.META.get('HTTP_TOKEN')
     if not token:
@@ -61,6 +62,7 @@ def get_user_by_request(request):
     except ObjectDoesNotExist:
         return
     return user
+
 
 def get_username_by_request(request):
     user = get_user_by_request(request)
