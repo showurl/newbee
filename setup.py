@@ -8,7 +8,7 @@ setup(
     author="showurl",
     author_email = "showurl@163.com",
     install_requires=[
-        'django == 2.0.0',
+        'django == 2.2.13',
         'pycryptodome',
         'djangorestframework-jwt'
     ],
